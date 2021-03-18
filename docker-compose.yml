@@ -10,6 +10,8 @@ services:
     volumes:
       - .:/app
       - $GOPATH/pkg/mod:/go/pkg/mod
+    env_file:
+      - .env
     environment:
       - GOPATH=/go
       - GOARCH=amd64
@@ -25,10 +27,8 @@ services:
       project:
         aliases:
           - database
-    environment:
-      POSTGRES_DB: postgres
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+    env_file:
+      - .env
     ports:
       - "35432:5432"
   migrate:

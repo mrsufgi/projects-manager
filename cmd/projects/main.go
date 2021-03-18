@@ -13,6 +13,7 @@ import (
 	thd "github.com/mrsufgi/projects-manager/internal/projects/delivery/http"
 	tr "github.com/mrsufgi/projects-manager/internal/projects/repository/pg"
 	ts "github.com/mrsufgi/projects-manager/internal/projects/service"
+	"github.com/mrsufgi/projects-manager/pkg/helpers"
 
 	"github.com/julienschmidt/httprouter"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -23,8 +24,8 @@ func main() {
 	// logger setup
 	setupLogger(true)
 
-	// TODO: read params from env
-	conf, err := sqlx.Connect("postgres", "host=db port=5432 user=postgres password=postgres dbname=postgres sslmode=disable")
+	conf, err := sqlx.Connect("postgres", helpers.GetConnectionString())
+
 	if err != nil {
 		log.Fatalln(err)
 	}

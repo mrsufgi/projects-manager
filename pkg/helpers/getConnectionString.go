@@ -6,8 +6,8 @@ import "fmt"
 func GetConnectionString() string {
 	dbname := GetEnv("POSTGRES_DB", "postgres")
 	user := GetEnv("POSTGRES_USER", "postgres")
-	password := GetEnv("POSTGRES_PASSWORD", "")
-	host := GetEnv("POSTGRES_HOST", "localhost")
+	password := GetEnv("POSTGRES_PASSWORD", "postgres")
+	host := GetEnv("POSTGRES_HOST", "db")
 	port := GetEnv("POSTGRES_PORT", "5432")
 	return fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
 }
