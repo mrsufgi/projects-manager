@@ -23,7 +23,8 @@ func main() {
 	// logger setup
 	setupLogger(true)
 
-	conf, err := sqlx.Connect("postgres", "host=database port=5432 user=postgres password=postgres dbname=demo sslmode=disable")
+	// TODO: read params from env
+	conf, err := sqlx.Connect("postgres", "host=db port=5432 user=postgres password=postgres dbname=postgres sslmode=disable")
 	if err != nil {
 		log.Fatalln(err)
 	}
