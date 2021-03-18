@@ -1,0 +1,2 @@
+DROP TABLE IF EXISTS projects;
+DROP FUNCTION IF EXISTS update_timestamp() CASCADE;
