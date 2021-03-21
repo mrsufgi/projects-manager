@@ -81,7 +81,7 @@ func (p *ProjectsHandler) createProject(w http.ResponseWriter, r *http.Request, 
 	id, err := p.TService.CreateProject(project)
 	if err != nil {
 		log.Errorf("unable to read project %v", err)
-		herr := &transport.ResponseError{HTTPStatus: http.StatusBadRequest, Code: 40001, Message: "Unable to update project"}
+		herr := &transport.ResponseError{HTTPStatus: http.StatusBadRequest, Code: 40001, Message: "Unable to create project"}
 		herr.WriteToResponse(w)
 		return
 	}

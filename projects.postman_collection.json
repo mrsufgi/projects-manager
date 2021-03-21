@@ -52,7 +52,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"event\": \"test\",\n    \"name\": \"test project\",\n    \"vertical\": \"tools\",\n    \"url\": \"https://github.com/mrsufgi/demo_repo\"\n}",
+					"raw": "{\n    \"event\": \"test\",\n    \"name\": \"test project\",\n    \"vertical\": \"tools\",\n    \"url\": \"https://github.com/mrsufgi/demo_repo\",\n    \"credentials\": { \"user\": \"hello\", \"password\": \"password\"}\n}",
 					"options": {
 						"raw": {
 							"language": "json"
