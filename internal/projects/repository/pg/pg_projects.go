@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"fmt"
+
 	"github.com/jmoiron/sqlx"
 	"github.com/mrsufgi/projects-manager/internal/domain"
 
@@ -21,8 +23,15 @@ func NewPgProjectsRepository(conn *sqlx.DB) domain.ProjectsRepository {
 }
 
 // TODO: Add Context and Search Params
-func (tr *pgProjectsRepository) SearchProjects() (*[]domain.Project, error) {
-	query := "SELECT project_id, name, vertical, event, created_at, updated_at from projects"
+func (tr *pgProjectsRepository) SearchProjects(p domain.SearchProjectsInput) (*[]domain.Project, error) {
+	// TODO: Better querybuilding
+	var where string
+
+	// TODO: Support by name
+	if p.URL != "" {
+		where = fmt.Sprintf("WHERE url='%s'", p.URL)
+	}
+	query := fmt.Sprintf("SELECT project_id, name, vertical, event, url, credentials, created_at, updated_at from projects %s", where)
 	project := &[]domain.Project{}
 	if err := tr.conn.Select(project, query); err != nil {
 		log.Errorf("query error: %v", err)
@@ -32,7 +41,7 @@ func (tr *pgProjectsRepository) SearchProjects() (*[]domain.Project, error) {
 }
 
 func (tr *pgProjectsRepository) ReadProject(id int) (*domain.Project, error) {
-	query := "SELECT project_id, name, vertical, event, created_at, updated_at from projects WHERE project_id = $1"
+	query := "SELECT project_id, name, vertical, event, url, credentials, created_at, updated_at from projects WHERE project_id = $1"
 	project := &domain.Project{}
 	if err := tr.conn.Get(project, query, id); err != nil {
 		log.Errorf("query error: %v", err)
@@ -42,9 +51,9 @@ func (tr *pgProjectsRepository) ReadProject(id int) (*domain.Project, error) {
 }
 
 func (tr *pgProjectsRepository) CreateProject(project domain.Project) (int, error) {
-	query := `INSERT INTO projects (name, vertical, event) VALUES ($1, $2, $3) RETURNING project_id`
+	query := `INSERT INTO projects (name, vertical, event, url, credentials) VALUES ($1, $2, $3, $4, $5) RETURNING project_id`
 	var id int
-	if err := tr.conn.QueryRow(query, project.Name, project.Vertical, project.Event).Scan(&id); err != nil {
+	if err := tr.conn.QueryRow(query, project.Name, project.Vertical, project.Event, project.URL, project.Credentials).Scan(&id); err != nil {
 		log.Errorf("query error: %v", err)
 		return -1, err
 	}
@@ -52,8 +61,9 @@ func (tr *pgProjectsRepository) CreateProject(project domain.Project) (int, erro
 }
 
 func (tr *pgProjectsRepository) UpdateProject(id int, project domain.Project) (int64, error) {
-	query := `UPDATE projects SET name=COALESCE($2, name), vertical=COALESCE($3, vertical), event=COALESCE($4, event) WHERE project_id=$1`
-	res, err := tr.conn.Exec(query, id, project.Name, project.Vertical, project.Event)
+	query := `UPDATE projects 
+		SET name=COALESCE($2, name), vertical=COALESCE($3, vertical), event=COALESCE($4, event), url=COALESCE($5, url) WHERE project_id=$1`
+	res, err := tr.conn.Exec(query, id, project.Name, project.Vertical, project.Event, project.URL)
 
 	if err != nil {
 		log.Errorf("query error: %v", err)

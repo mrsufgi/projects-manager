@@ -26,13 +26,33 @@
 			"response": []
 		},
 		{
+			"name": "get event",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:4000/events/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"events",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "create project",
 			"request": {
 				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"event\": \"dummy\",\n    \"name\": \"test project\",\n    \"vertical\": \"tools\"\n}",
+					"raw": "{\n    \"event\": \"test\",\n    \"name\": \"test project\",\n    \"vertical\": \"tools\",\n    \"url\": \"https://github.com/mrsufgi/demo_repo\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -116,6 +136,31 @@
 					"port": "4000",
 					"path": [
 						"projects"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "search events",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:4000/events?name=test",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"events"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "test"
+						}
 					]
 				}
 			},

@@ -1,14 +1,19 @@
 package domain
 
-import "time"
+import (
+	"encoding/json"
+	"time"
+)
 
 type Project struct {
-	ID        int        `db:"project_id" json:"id,omitempty"`
-	Name      *string    `db:"name" json:"name"`
-	Vertical  *string    `db:"vertical" json:"vertical"`
-	Event     *string    `db:"event" json:"event"`
-	CreatedAt *time.Time `db:"created_at" json:"created_at"`
-	UpdatedAt *time.Time `db:"updated_at" json:"updated_at"`
+	ID          int             `db:"project_id" json:"id,omitempty"`
+	Name        *string         `db:"name" json:"name"`
+	Vertical    *string         `db:"vertical" json:"vertical"`
+	Event       *string         `db:"event" json:"event"`
+	URL         *string         `db:"url" json:"url"`
+	Credentials json.RawMessage `db:"credentials" json:"credentials"`
+	CreatedAt   *time.Time      `db:"created_at" json:"created_at"`
+	UpdatedAt   *time.Time      `db:"updated_at" json:"updated_at"`
 }
 type SearchProjectsInput struct {
 	Name string
@@ -17,7 +22,7 @@ type SearchProjectsInput struct {
 
 //go:generate mockgen -destination=mocks/mock_projects_repository.go -package=mocks . ProjectsRepository
 type ProjectsRepository interface {
-	SearchProjects() (*[]Project, error)
+	SearchProjects(p SearchProjectsInput) (*[]Project, error)
 	CreateProject(project Project) (int, error)
 	ReadProject(id int) (*Project, error)
 	UpdateProject(id int, project Project) (int64, error)
@@ -26,7 +31,7 @@ type ProjectsRepository interface {
 
 //go:generate mockgen -destination=mocks/mock_projects_service.go -package=mocks . ProjectsService
 type ProjectsService interface {
-	SearchProjects() (*[]Project, error)
+	SearchProjects(p SearchProjectsInput) (*[]Project, error)
 	CreateProject(project Project) (int, error)
 	ReadProject(id int) (*Project, error)
 	UpdateProject(id int, project Project) (int64, error)

@@ -5,6 +5,7 @@ import "time"
 type Event struct {
 	ID        int        `db:"event_id" json:"id,omitempty"`
 	Name      *string    `db:"name" json:"name"`
+	ProjectID int        `db:"project_id" json:"project_id"`
 	Timestamp *time.Time `db:"timestamp" json:"timestamp"`
 }
 

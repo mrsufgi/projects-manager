@@ -35,7 +35,8 @@ func NewProjectsHandler(r *httprouter.Router, ts domain.ProjectsService) *Projec
 func (p *ProjectsHandler) searchProjects(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	w.Header().Set("Content-Type", "application/json")
 
-	rec, err := p.TService.SearchProjects()
+	queryValues := r.URL.Query()
+	rec, err := p.TService.SearchProjects(domain.SearchProjectsInput{Name: queryValues.Get("name"), URL: queryValues.Get("url")})
 	if err != nil {
 		herr := &transport.ResponseError{HTTPStatus: http.StatusBadRequest, Code: 40001, Message: "unable to search projects"}
 		herr.WriteToResponse(w)
@@ -110,9 +111,18 @@ func (p *ProjectsHandler) updateProject(w http.ResponseWriter, r *http.Request, 
 	}
 
 	affected, err := p.TService.UpdateProject(id, project)
+	// TODO: Create HTTP Error pkg
 	if err != nil {
 		log.Errorf("unable to update project %v", err)
 		herr := &transport.ResponseError{HTTPStatus: http.StatusBadRequest, Code: 40001, Message: "Unable to update project"}
+		herr.WriteToResponse(w)
+		return
+	}
+
+	// TODO: throw on not found in update query
+	if affected == 0 {
+		log.Errorf("unable to update project %v", err)
+		herr := &transport.ResponseError{HTTPStatus: http.StatusBadRequest, Code: 40400, Message: "Unable to update project, nothing was changed."}
 		herr.WriteToResponse(w)
 		return
 	}

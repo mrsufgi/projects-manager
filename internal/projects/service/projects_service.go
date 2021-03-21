@@ -18,9 +18,8 @@ func NewProjectService(tr domain.ProjectsRepository, pc *pusher.Client) domain.P
 	}
 }
 
-// TODO: add search variables
-func (ts *projectsService) SearchProjects() (*[]domain.Project, error) {
-	res, err := ts.tr.SearchProjects()
+func (ts *projectsService) SearchProjects(p domain.SearchProjectsInput) (*[]domain.Project, error) {
+	res, err := ts.tr.SearchProjects(p)
 	if len(*res) == 0 {
 		log.Info("no projects found")
 	}
