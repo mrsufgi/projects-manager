@@ -8,33 +8,10 @@ import (
 
 	"github.com/julienschmidt/httprouter"
 	"github.com/mrsufgi/projects-manager/internal/domain"
+	"github.com/mrsufgi/projects-manager/pkg/transport"
+
 	log "github.com/sirupsen/logrus"
 )
-
-// ResponseError represent the reseponse error struct
-type ResponseError struct {
-	HTTPStatus int    `json:"-"`
-	Code       int    `json:"code"`
-	Message    string `json:"message"`
-}
-
-func (e *ResponseError) WriteToResponse(w http.ResponseWriter) {
-	w.WriteHeader(e.HTTPStatus)
-	fmt.Fprint(w, e.ToJSON())
-}
-
-func (e *ResponseError) ToJSON() string {
-	j, err := json.Marshal(e)
-	if err != nil {
-		return `{"code":50001,"message":"unable to marshal error"}`
-	}
-	return string(j)
-}
-
-type ResponseMessage struct {
-	ID      int64  `json:"id,omitempty"`
-	Message string `json:"message,omitempty"`
-}
 
 type ProjectsHandler struct {
 	TService domain.ProjectsService
@@ -45,6 +22,7 @@ func NewProjectsHandler(r *httprouter.Router, ts domain.ProjectsService) *Projec
 		TService: ts,
 	}
 
+	// CRUD
 	r.GET("/projects", handler.searchProjects)
 	r.GET("/projects/:id", handler.readProject)
 	r.POST("/projects", handler.createProject)
@@ -59,7 +37,7 @@ func (p *ProjectsHandler) searchProjects(w http.ResponseWriter, r *http.Request,
 
 	rec, err := p.TService.SearchProjects()
 	if err != nil {
-		herr := &ResponseError{HTTPStatus: http.StatusBadRequest, Code: 40001, Message: "unable to search projects"}
+		herr := &transport.ResponseError{HTTPStatus: http.StatusBadRequest, Code: 40001, Message: "unable to search projects"}
 		herr.WriteToResponse(w)
 		return
 	}
@@ -80,7 +58,7 @@ func (p *ProjectsHandler) readProject(w http.ResponseWriter, r *http.Request, ps
 	rec, err := p.TService.ReadProject(id)
 	if err != nil {
 		log.Errorf("unable to read project %v", err)
-		herr := &ResponseError{HTTPStatus: http.StatusBadRequest, Code: 40001, Message: "Unable to read project"}
+		herr := &transport.ResponseError{HTTPStatus: http.StatusBadRequest, Code: 40001, Message: "Unable to read project"}
 		herr.WriteToResponse(w)
 		return
 	}
@@ -102,12 +80,12 @@ func (p *ProjectsHandler) createProject(w http.ResponseWriter, r *http.Request, 
 	id, err := p.TService.CreateProject(project)
 	if err != nil {
 		log.Errorf("unable to read project %v", err)
-		herr := &ResponseError{HTTPStatus: http.StatusBadRequest, Code: 40001, Message: "Unable to update project"}
+		herr := &transport.ResponseError{HTTPStatus: http.StatusBadRequest, Code: 40001, Message: "Unable to update project"}
 		herr.WriteToResponse(w)
 		return
 	}
 
-	res := ResponseMessage{
+	res := transport.ResponseMessage{
 		ID:      int64(id),
 		Message: "Project created successfully",
 	}
@@ -134,14 +112,14 @@ func (p *ProjectsHandler) updateProject(w http.ResponseWriter, r *http.Request, 
 	affected, err := p.TService.UpdateProject(id, project)
 	if err != nil {
 		log.Errorf("unable to update project %v", err)
-		herr := &ResponseError{HTTPStatus: http.StatusBadRequest, Code: 40001, Message: "Unable to update project"}
+		herr := &transport.ResponseError{HTTPStatus: http.StatusBadRequest, Code: 40001, Message: "Unable to update project"}
 		herr.WriteToResponse(w)
 		return
 	}
 
 	msg := fmt.Sprintf("project updated successfully. total rows affected %v", affected)
 
-	res := ResponseMessage{
+	res := transport.ResponseMessage{
 		ID:      int64(id),
 		Message: msg,
 	}
@@ -162,14 +140,14 @@ func (p *ProjectsHandler) deleteProject(w http.ResponseWriter, r *http.Request, 
 	affected, err := p.TService.DeleteProject(id)
 	if err != nil {
 		log.Errorf("unable to delete project %v", err)
-		herr := &ResponseError{HTTPStatus: http.StatusBadRequest, Code: 40001, Message: "Unable to delete project"}
+		herr := &transport.ResponseError{HTTPStatus: http.StatusBadRequest, Code: 40001, Message: "Unable to delete project"}
 		herr.WriteToResponse(w)
 		return
 	}
 
 	msg := fmt.Sprintf("project deleted successfully. total rows affected %v", affected)
 
-	res := ResponseMessage{
+	res := transport.ResponseMessage{
 		ID:      int64(id),
 		Message: msg,
 	}

@@ -11,12 +11,14 @@ import (
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 	thd "github.com/mrsufgi/projects-manager/internal/projects/delivery/http"
+
 	tr "github.com/mrsufgi/projects-manager/internal/projects/repository/pg"
 	ts "github.com/mrsufgi/projects-manager/internal/projects/service"
 	"github.com/mrsufgi/projects-manager/pkg/helpers"
 
 	"github.com/julienschmidt/httprouter"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"github.com/pusher/pusher-http-go"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -30,10 +32,20 @@ func main() {
 		log.Fatalln(err)
 	}
 
+	pconf := helpers.GetPusherURL()
+	pusherClient, perr := pusher.ClientFromURL(pconf)
+	if perr != nil {
+		log.Fatalln(err)
+	}
+
 	trepo := tr.NewPgProjectsRepository(conf)
-	mservice := ts.NewProjectService(trepo)
+	mservice := ts.NewProjectService(trepo, pusherClient)
 
 	port := ":3000"
+
+	if err != nil {
+		log.Fatalf("socket server unexpected error %v", err)
+	}
 	router := httprouter.New()
 	router.GET("/metrics", Metrics(promhttp.Handler()))
 	router.GET("/health", Health)
@@ -43,10 +55,11 @@ func main() {
 		Handler:      router,
 		ReadTimeout:  30 * time.Second,
 		WriteTimeout: 30 * time.Second,
+
 		// MaxHeaderBytes: 1 << 20,
 	}
 
-	// handler setup his own router
+	// handlers setup their own router
 	thd.NewProjectsHandler(router, mservice)
 
 	go func() {

@@ -5,7 +5,7 @@ import "time"
 type Project struct {
 	ID        int        `db:"project_id" json:"id,omitempty"`
 	Name      *string    `db:"name" json:"name"`
-	Verical   *string    `db:"vertical" json:"vertical"`
+	Vertical  *string    `db:"vertical" json:"vertical"`
 	Event     *string    `db:"event" json:"event"`
 	CreatedAt *time.Time `db:"created_at" json:"created_at"`
 	UpdatedAt *time.Time `db:"updated_at" json:"updated_at"`

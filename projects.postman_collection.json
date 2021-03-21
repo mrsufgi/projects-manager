@@ -1,103 +1,125 @@
 {
-  "info": {
-    "_postman_id": "96b43028-0f69-4745-a072-6e1743182aa3",
-    "name": "projects",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-  },
-  "item": [
-    {
-      "name": "get project",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "http://localhost:4000/projects/1",
-          "protocol": "http",
-          "host": ["localhost"],
-          "port": "4000",
-          "path": ["projects", "1"]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "create project",
-      "request": {
-        "method": "POST",
-        "header": [],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n    \"done\": false,\n    \"name\": \"test\",\n    \"details\": \"test details\"\n}",
-          "options": {
-            "raw": {
-              "language": "json"
-            }
-          }
-        },
-        "url": {
-          "raw": "http://localhost:4000/projects",
-          "protocol": "http",
-          "host": ["localhost"],
-          "port": "4000",
-          "path": ["projects"]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "update project",
-      "request": {
-        "method": "PUT",
-        "header": [],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n    \"done\": true\n}",
-          "options": {
-            "raw": {
-              "language": "json"
-            }
-          }
-        },
-        "url": {
-          "raw": "http://localhost:4000/projects/1",
-          "protocol": "http",
-          "host": ["localhost"],
-          "port": "4000",
-          "path": ["projects", "1"]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "delete project",
-      "request": {
-        "method": "DELETE",
-        "header": [],
-        "url": {
-          "raw": "http://localhost:4000/projects/1",
-          "protocol": "http",
-          "host": ["localhost"],
-          "port": "4000",
-          "path": ["projects", "2"]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "search projects",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "http://localhost:4000/projects",
-          "protocol": "http",
-          "host": ["localhost"],
-          "port": "4000",
-          "path": ["projects"]
-        }
-      },
-      "response": []
-    }
-  ],
-  "protocolProfileBehavior": {}
+	"info": {
+		"_postman_id": "260fa813-7951-4264-a5eb-75ad986a2264",
+		"name": "projects",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "get project",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:4000/projects/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"projects",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create project",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"event\": \"dummy\",\n    \"name\": \"test project\",\n    \"vertical\": \"tools\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4000/projects",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"projects"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update project",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"event\": \"dummy_updated\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4000/projects/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"projects",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete project",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:4000/projects/2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"projects",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "search projects",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:4000/projects",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"projects"
+					]
+				}
+			},
+			"response": []
+		}
+	]
 }

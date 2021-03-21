@@ -2,16 +2,19 @@ package service
 
 import (
 	"github.com/mrsufgi/projects-manager/internal/domain"
+	"github.com/pusher/pusher-http-go"
 	log "github.com/sirupsen/logrus"
 )
 
 type projectsService struct {
 	tr domain.ProjectsRepository
+	pc *pusher.Client
 }
 
-func NewProjectService(tr domain.ProjectsRepository) domain.ProjectsService {
+func NewProjectService(tr domain.ProjectsRepository, pc *pusher.Client) domain.ProjectsService {
 	return &projectsService{
 		tr: tr,
+		pc: pc,
 	}
 }
 
@@ -39,6 +42,8 @@ func (ts *projectsService) ReadProject(id int) (*domain.Project, error) {
 		log.Infof("unable to find project: %v", id)
 		return nil, err
 	}
+	data := map[string]string{"message": "hello world"}
+	ts.pc.Trigger("my-channel", "my-event", data)
 	return res, nil
 }
 

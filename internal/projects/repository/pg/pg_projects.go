@@ -20,6 +20,7 @@ func NewPgProjectsRepository(conn *sqlx.DB) domain.ProjectsRepository {
 	return r
 }
 
+// TODO: Add Context and Search Params
 func (tr *pgProjectsRepository) SearchProjects() (*[]domain.Project, error) {
 	query := "SELECT project_id, name, vertical, event, created_at, updated_at from projects"
 	project := &[]domain.Project{}
@@ -43,7 +44,7 @@ func (tr *pgProjectsRepository) ReadProject(id int) (*domain.Project, error) {
 func (tr *pgProjectsRepository) CreateProject(project domain.Project) (int, error) {
 	query := `INSERT INTO projects (name, vertical, event) VALUES ($1, $2, $3) RETURNING project_id`
 	var id int
-	if err := tr.conn.QueryRow(query, project.Name, project.Verical, project.Event).Scan(&id); err != nil {
+	if err := tr.conn.QueryRow(query, project.Name, project.Vertical, project.Event).Scan(&id); err != nil {
 		log.Errorf("query error: %v", err)
 		return -1, err
 	}
@@ -52,7 +53,7 @@ func (tr *pgProjectsRepository) CreateProject(project domain.Project) (int, erro
 
 func (tr *pgProjectsRepository) UpdateProject(id int, project domain.Project) (int64, error) {
 	query := `UPDATE projects SET name=COALESCE($2, name), vertical=COALESCE($3, vertical), event=COALESCE($4, event) WHERE project_id=$1`
-	res, err := tr.conn.Exec(query, id, project.Name, project.Verical, project.Event)
+	res, err := tr.conn.Exec(query, id, project.Name, project.Vertical, project.Event)
 
 	if err != nil {
 		log.Errorf("query error: %v", err)
