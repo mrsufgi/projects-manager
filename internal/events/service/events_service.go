@@ -7,17 +7,19 @@ import (
 
 type eventsService struct {
 	er domain.EventsRepository
+	ps domain.ProjectsService
 }
 
-func NewEventService(er domain.EventsRepository) domain.EventsService {
+func NewEventService(er domain.EventsRepository, ps domain.ProjectsService) domain.EventsService {
 	return &eventsService{
 		er: er,
+		ps: ps,
 	}
 }
 
 func (ts *eventsService) SearchEvents(p domain.SearchEventsInput) (*[]domain.Event, error) {
 	res, err := ts.er.SearchEvents(p)
-	if len(*res) == 0 {
+	if res == nil || len(*res) == 0 {
 		log.Info("no events found")
 	}
 	return res, err
@@ -33,11 +35,16 @@ func (ts *eventsService) ReadEvent(id int) (*domain.Event, error) {
 	return res, nil
 }
 
-func (ts *eventsService) AddEvent(event domain.Event) (int, error) {
-	res, err := ts.er.AddEvent(event)
+// LogEvent find the project
+func (ts *eventsService) LogEvent(p domain.LogEventInput) (int, error) {
+	// p := ts.ps.SearchProjects() // get project by git-url (and get project id)
+	// if project not found (no listeners, dont log)
+	e := domain.Event{Name: &p.CommitMessage}
+	res, err := ts.er.CreateEvent(e)
 	if res == -1 {
-		log.Infof("unable to create event: %v", event)
+		log.Infof("unable to create event: %v", e)
 		return -1, err
 	}
+	log.Debugf("event logged succesfully: %#v", p)
 	return res, nil
 }

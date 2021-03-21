@@ -2,7 +2,6 @@ package http
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"regexp"
 	"strconv"
@@ -73,7 +72,7 @@ func (p *EventsHandler) readEvent(w http.ResponseWriter, r *http.Request, ps htt
 func (p *EventsHandler) githubWebhook(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	w.Header().Set("Content-Type", "application/json")
 
-	payload, err := github.ValidatePayload(r, []byte("my-secret-key"))
+	payload, err := github.ValidatePayload(r, []byte("test")) // TODO: use secret from config
 	if err != nil {
 		log.Errorf("unable to validate request body: %s\n", err)
 		return
@@ -85,30 +84,36 @@ func (p *EventsHandler) githubWebhook(w http.ResponseWriter, r *http.Request, ps
 		log.Errorf("unable to parse webhook: %s\n", err)
 		return
 	}
-
+	var id int = -1
 	switch e := event.(type) {
 	case *github.PushEvent:
-		matched, err := regexp.MatchString(*e.Ref, "refs/tags")
+		matched, err := regexp.MatchString("refs/tags", *e.Ref)
 		if err != nil {
 			log.Errorf("unable to match ref: %s", err)
 			return
 		}
 
 		if matched {
-			fmt.Printf("event in repository %s %s\n",
-				*e.HeadCommit.Message, *e.Repo.FullName)
-
-			/* id, err := p.TService.(event)
+			id, err = p.TService.LogEvent(domain.LogEventInput{RepoURL: e.GetRepo().GetHTMLURL(), CommitMessage: e.GetHeadCommit().GetMessage()})
 			if err != nil {
 				log.Errorf("unable to read event %v", err)
 				herr := &transport.ResponseError{HTTPStatus: http.StatusBadRequest, Code: 40001, Message: "Unable to update event"}
 				herr.WriteToResponse(w)
 				return
-			} */
+			}
 		}
 
 	default:
-		log.Printf("unsupported event type %s\n", github.WebHookType(r))
-		return
+		log.Printf("unsupported event type: %s", github.WebHookType(r))
+	}
+
+	// TODO: maybe redundant
+	res := transport.ResponseMessage{
+		ID:      int64(id),
+		Message: "hook processed succesfully",
+	}
+
+	if err := json.NewEncoder(w).Encode(res); err != nil {
+		log.Errorf("unable to encode response %v", err)
 	}
 }

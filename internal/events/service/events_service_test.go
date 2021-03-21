@@ -70,7 +70,7 @@ func Test_eventsService_SearchEvents(t *testing.T) {
 	}
 }
 
-func Test_eventsService_AddEvent(t *testing.T) {
+func Test_eventsService_LogEvent(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	tr := mocks.NewMockEventsRepository(ctrl)
@@ -96,15 +96,15 @@ func Test_eventsService_AddEvent(t *testing.T) {
 			ts := service.NewEventService(
 				tt.fields.tr,
 			)
-			tr.EXPECT().AddEvent(tt.args.event).Return(tt.args.event.ID, nil)
+			tr.EXPECT().CreateEvent(tt.args.event).Return(tt.args.event.ID, nil)
 
-			got, err := ts.AddEvent(tt.args.event)
+			got, err := ts.LogEvent(tt.args.event)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("eventsService.AddEvent() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("eventsService.LogEvent() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if got != tt.want {
-				t.Errorf("eventsService.AddEvent() = %v, want %v", got, tt.want)
+				t.Errorf("eventsService.LogEvent() = %v, want %v", got, tt.want)
 			}
 		})
 	}

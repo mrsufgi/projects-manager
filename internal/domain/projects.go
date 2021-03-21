@@ -10,6 +10,10 @@ type Project struct {
 	CreatedAt *time.Time `db:"created_at" json:"created_at"`
 	UpdatedAt *time.Time `db:"updated_at" json:"updated_at"`
 }
+type SearchProjectsInput struct {
+	Name string
+	URL  string
+}
 
 //go:generate mockgen -destination=mocks/mock_projects_repository.go -package=mocks . ProjectsRepository
 type ProjectsRepository interface {

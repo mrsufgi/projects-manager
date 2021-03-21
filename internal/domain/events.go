@@ -12,16 +12,22 @@ type SearchEventsInput struct {
 	Name string
 }
 
+type LogEventInput struct {
+	RepoURL       string
+	CommitMessage string
+	// Timestamp *time.Time
+}
+
 //go:generate mockgen -destination=mocks/mock_events_repository.go -package=mocks . EventsRepository
 type EventsRepository interface {
 	SearchEvents(p SearchEventsInput) (*[]Event, error)
-	AddEvent(event Event) (int, error)
+	CreateEvent(event Event) (int, error)
 	ReadEvent(id int) (*Event, error)
 }
 
 //go:generate mockgen -destination=mocks/mock_events_service.go -package=mocks . EventsService
 type EventsService interface {
 	SearchEvents(p SearchEventsInput) (*[]Event, error)
-	AddEvent(event Event) (int, error)
+	LogEvent(p LogEventInput) (int, error)
 	ReadEvent(id int) (*Event, error)
 }

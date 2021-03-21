@@ -33,19 +33,19 @@ func (m *MockEventsService) EXPECT() *MockEventsServiceMockRecorder {
 	return m.recorder
 }
 
-// AddEvent mocks base method
-func (m *MockEventsService) AddEvent(arg0 domain.Event) (int, error) {
+// CreateEvent mocks base method
+func (m *MockEventsService) CreateEvent(arg0 domain.Event) (int, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "AddEvent", arg0)
+	ret := m.ctrl.Call(m, "CreateEvent", arg0)
 	ret0, _ := ret[0].(int)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// AddEvent indicates an expected call of AddEvent
-func (mr *MockEventsServiceMockRecorder) AddEvent(arg0 interface{}) *gomock.Call {
+// CreateEvent indicates an expected call of CreateEvent
+func (mr *MockEventsServiceMockRecorder) CreateEvent(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddEvent", reflect.TypeOf((*MockEventsService)(nil).AddEvent), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateEvent", reflect.TypeOf((*MockEventsService)(nil).CreateEvent), arg0)
 }
 
 // ReadEvent mocks base method

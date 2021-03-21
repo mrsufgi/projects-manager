@@ -10,8 +10,11 @@ import (
 
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
+	ehd "github.com/mrsufgi/projects-manager/internal/events/delivery/http"
 	thd "github.com/mrsufgi/projects-manager/internal/projects/delivery/http"
 
+	er "github.com/mrsufgi/projects-manager/internal/events/repository/pg"
+	es "github.com/mrsufgi/projects-manager/internal/events/service"
 	tr "github.com/mrsufgi/projects-manager/internal/projects/repository/pg"
 	ts "github.com/mrsufgi/projects-manager/internal/projects/service"
 	"github.com/mrsufgi/projects-manager/pkg/helpers"
@@ -39,7 +42,9 @@ func main() {
 	}
 
 	trepo := tr.NewPgProjectsRepository(conf)
+	erepo := er.NewPgEventsRepository(conf)
 	mservice := ts.NewProjectService(trepo, pusherClient)
+	eservice := es.NewEventService(erepo, mservice)
 
 	port := ":3000"
 
@@ -61,6 +66,7 @@ func main() {
 
 	// handlers setup their own router
 	thd.NewProjectsHandler(router, mservice)
+	ehd.NewEventsHandler(router, eservice)
 
 	go func() {
 		log.Infof("start http server on port %s", port)
