@@ -15,9 +15,8 @@ func NewEventService(er domain.EventsRepository) domain.EventsService {
 	}
 }
 
-// TODO: add search variables
-func (ts *eventsService) SearchEvents() (*[]domain.Event, error) {
-	res, err := ts.er.SearchEvents(domain.SearchEventsInput{})
+func (ts *eventsService) SearchEvents(p domain.SearchEventsInput) (*[]domain.Event, error) {
+	res, err := ts.er.SearchEvents(p)
 	if len(*res) == 0 {
 		log.Info("no events found")
 	}

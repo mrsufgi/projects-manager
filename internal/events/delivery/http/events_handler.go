@@ -35,7 +35,8 @@ func NewEventsHandler(r *httprouter.Router, ts domain.EventsService) *EventsHand
 func (p *EventsHandler) searchEvents(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	w.Header().Set("Content-Type", "application/json")
 
-	rec, err := p.TService.SearchEvents()
+	queryValues := r.URL.Query()
+	rec, err := p.TService.SearchEvents(domain.SearchEventsInput{Name: queryValues.Get("name")})
 	if err != nil {
 		herr := &transport.ResponseError{HTTPStatus: http.StatusBadRequest, Code: 40001, Message: "unable to search events"}
 		herr.WriteToResponse(w)

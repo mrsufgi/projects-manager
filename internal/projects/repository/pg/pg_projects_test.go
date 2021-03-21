@@ -31,7 +31,6 @@ func getConn() *sqlx.DB {
 	return conn
 }
 
-// TODO: create function to create PG connection from env variables so it works with docker/local pg.
 func TestNewPgProjectsRepository(t *testing.T) {
 	type args struct {
 		conn *sqlx.DB
@@ -65,7 +64,11 @@ func Test_pgProjectsRepository_ReadProject(t *testing.T) {
 		want    *domain.Project
 		wantErr bool
 	}{
-		{"happy project spec", tr, args{id: 0}, &domain.Project{ID: 0, Done: false, Name: String("ori"), Details: String("mehhh")}, false},
+		{"happy project spec", tr, args{id: 1},
+			&domain.Project{ID: 1,
+				Name:     String("ori"),
+				Vertical: String("tools"),
+				Event:    String("tag")}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -132,7 +135,12 @@ func Test_pgProjectsRepository_CreateProject(t *testing.T) {
 		want    int
 		wantErr bool
 	}{
-		{"happy project spec", fields{conn: getConn()}, args{domain.Project{Name: String("test"), Details: String("test")}}, 1, false},
+		{"happy project spec", fields{conn: getConn()},
+			args{domain.Project{ID: 0,
+				Name:     String("ori"),
+				Vertical: String("tools"),
+				Event:    String("tag")}},
+			1, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -168,7 +176,7 @@ func Test_pgProjectsRepository_UpdateProject(t *testing.T) {
 		wantErr bool
 	}{
 		{"happy project spec", fields{conn: getConn()}, args{id: 1,
-			project: domain.Project{Name: String("updated"), Details: String("updated"), Done: true}}, 1, false},
+			project: domain.Project{Name: String("updated"), Vertical: String("updated"), Event: String("updated")}}, 1, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

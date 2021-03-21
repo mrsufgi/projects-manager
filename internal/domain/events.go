@@ -21,7 +21,7 @@ type EventsRepository interface {
 
 //go:generate mockgen -destination=mocks/mock_events_service.go -package=mocks . EventsService
 type EventsService interface {
-	SearchEvents() (*[]Event, error)
+	SearchEvents(p SearchEventsInput) (*[]Event, error)
 	AddEvent(event Event) (int, error)
 	ReadEvent(id int) (*Event, error)
 }

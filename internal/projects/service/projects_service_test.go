@@ -8,6 +8,8 @@ import (
 	"github.com/mrsufgi/projects-manager/internal/domain"
 	"github.com/mrsufgi/projects-manager/internal/domain/mocks"
 	"github.com/mrsufgi/projects-manager/internal/projects/service"
+	"github.com/mrsufgi/projects-manager/pkg/helpers"
+	"github.com/pusher/pusher-http-go"
 )
 
 func String(x string) *string {
@@ -25,9 +27,14 @@ func TestNewProjectService(t *testing.T) {
 	}{
 		// TODO: Add test cases.
 	}
+
+	psh, err := pusher.ClientFromURL(helpers.GetPusherURL())
+	if err != nil {
+		t.Errorf("Unable to run pusher client = %v", err)
+	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := service.NewProjectService(tt.args.tr); !reflect.DeepEqual(got, tt.want) {
+			if got := service.NewProjectService(tt.args.tr, psh); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("NewProjectService() = %v, want %v", got, tt.want)
 			}
 		})
@@ -50,10 +57,17 @@ func Test_projectsService_SearchProjects(t *testing.T) {
 	}{
 		{"happy search projects", fields{tr: tr}, &[]domain.Project{}, false},
 	}
+
+	psh, err := pusher.ClientFromURL(helpers.GetPusherURL())
+	if err != nil {
+		t.Errorf("Unable to run pusher client = %v", err)
+	}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ts := service.NewProjectService(
 				tt.fields.tr,
+				psh,
 			)
 			tr.EXPECT().SearchProjects().Return(&[]domain.Project{}, nil)
 
@@ -80,6 +94,10 @@ func Test_projectsService_CreateProject(t *testing.T) {
 	type args struct {
 		project domain.Project
 	}
+	psh, err := pusher.ClientFromURL(helpers.GetPusherURL())
+	if err != nil {
+		t.Errorf("Unable to run pusher client = %v", err)
+	}
 	tests := []struct {
 		name    string
 		fields  fields
@@ -87,12 +105,14 @@ func Test_projectsService_CreateProject(t *testing.T) {
 		want    int
 		wantErr bool
 	}{
-		{"happy create project", fields{tr: tr}, args{domain.Project{ID: 0, Done: false, Name: String("Test"), Details: String("None")}}, 0, false},
+		{"happy create project",
+			fields{tr: tr}, args{domain.Project{ID: 0, Name: String("Test"), Vertical: String("None"), Event: String("tag")}}, 0, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ts := service.NewProjectService(
 				tt.fields.tr,
+				psh,
 			)
 			tr.EXPECT().CreateProject(tt.args.project).Return(tt.args.project.ID, nil)
 
@@ -119,6 +139,10 @@ func Test_projectsService_ReadProject(t *testing.T) {
 	type args struct {
 		id int
 	}
+	psh, err := pusher.ClientFromURL(helpers.GetPusherURL())
+	if err != nil {
+		t.Errorf("Unable to run pusher client = %v", err)
+	}
 	tests := []struct {
 		name    string
 		fields  fields
@@ -127,12 +151,13 @@ func Test_projectsService_ReadProject(t *testing.T) {
 		wantErr bool
 	}{
 		{"happy read project", fields{tr: tr}, args{id: 0},
-			&domain.Project{ID: 0, Done: false, Name: String("Test"), Details: String("None")}, false},
+			&domain.Project{ID: 0, Name: String("Test"), Vertical: String("None"), Event: String("tag")}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ts := service.NewProjectService(
 				tt.fields.tr,
+				psh,
 			)
 
 			// note: returning the 'tt.want', simplify the fake data and validation checks
@@ -154,13 +179,16 @@ func Test_projectsService_UpdateProject(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	tr := mocks.NewMockProjectsRepository(ctrl)
-
 	type fields struct {
 		tr domain.ProjectsRepository
 	}
 	type args struct {
 		id      int
 		project domain.Project
+	}
+	psh, err := pusher.ClientFromURL(helpers.GetPusherURL())
+	if err != nil {
+		t.Errorf("Unable to run pusher client = %v", err)
 	}
 	tests := []struct {
 		name    string
@@ -169,12 +197,13 @@ func Test_projectsService_UpdateProject(t *testing.T) {
 		want    int64
 		wantErr bool
 	}{
-		{"happy update project", fields{tr: tr}, args{id: 0, project: domain.Project{Done: true}}, 1, false},
+		{"happy update project", fields{tr: tr}, args{id: 0, project: domain.Project{Vertical: String("updated")}}, 1, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ts := service.NewProjectService(
 				tt.fields.tr,
+				psh,
 			)
 			tr.EXPECT().UpdateProject(tt.args.id, tt.args.project).Return(int64(1), nil)
 			got, err := ts.UpdateProject(tt.args.id, tt.args.project)
@@ -200,6 +229,10 @@ func Test_projectsService_DeleteProject(t *testing.T) {
 	type args struct {
 		id int
 	}
+	psh, err := pusher.ClientFromURL(helpers.GetPusherURL())
+	if err != nil {
+		t.Errorf("Unable to run pusher client = %v", err)
+	}
 	tests := []struct {
 		name    string
 		fields  fields
@@ -213,6 +246,7 @@ func Test_projectsService_DeleteProject(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			ts := service.NewProjectService(
 				tt.fields.tr,
+				psh,
 			)
 			tr.EXPECT().DeleteProject(tt.args.id).Return(int64(1), nil)
 			got, err := ts.DeleteProject(tt.args.id)

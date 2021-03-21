@@ -48,6 +48,7 @@ func (tr *pgEventsRepository) ReadEvent(id int) (*domain.Event, error) {
 	return event, nil
 }
 
+// Note: for simplicity timestamp is automatically created by the DB and not using event_ts
 func (tr *pgEventsRepository) AddEvent(event domain.Event) (int, error) {
 	query := `INSERT INTO events (name) VALUES ($1) RETURNING event_id`
 	var id int
