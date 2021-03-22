@@ -32,6 +32,15 @@ func (ts *projectsService) CreateProject(project domain.Project) (int, error) {
 		log.Infof("unable to create project: %v", project)
 		return -1, err
 	}
+	// Note: this is just a "demo" for notifying that a change was made, the type of message
+	// could be either a delta with the actaul payload, or jest a notification that the data is stale.
+	// for simplicity I chose "notifying" something was change so I know when to refetch
+	// data := map[string]string{"message": "hello world"}
+	terr := ts.pc.Trigger("projects", "added", res)
+	if terr != nil {
+		log.Errorf("unable to trigger pusher event")
+		return 0, terr
+	}
 	return res, nil
 }
 
@@ -41,8 +50,7 @@ func (ts *projectsService) ReadProject(id int) (*domain.Project, error) {
 		log.Infof("unable to find project: %v", id)
 		return nil, err
 	}
-	data := map[string]string{"message": "hello world"}
-	ts.pc.Trigger("my-channel", "my-event", data)
+
 	return res, nil
 }
 

@@ -79,18 +79,18 @@ func (mr *MockProjectsRepositoryMockRecorder) ReadProject(arg0 interface{}) *gom
 }
 
 // SearchProjects mocks base method
-func (m *MockProjectsRepository) SearchProjects() (*[]domain.Project, error) {
+func (m *MockProjectsRepository) SearchProjects(arg0 domain.SearchProjectsInput) (*[]domain.Project, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SearchProjects")
+	ret := m.ctrl.Call(m, "SearchProjects", arg0)
 	ret0, _ := ret[0].(*[]domain.Project)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // SearchProjects indicates an expected call of SearchProjects
-func (mr *MockProjectsRepositoryMockRecorder) SearchProjects() *gomock.Call {
+func (mr *MockProjectsRepositoryMockRecorder) SearchProjects(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SearchProjects", reflect.TypeOf((*MockProjectsRepository)(nil).SearchProjects))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SearchProjects", reflect.TypeOf((*MockProjectsRepository)(nil).SearchProjects), arg0)
 }
 
 // UpdateProject mocks base method

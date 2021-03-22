@@ -22,7 +22,6 @@ import (
 
 	"github.com/julienschmidt/httprouter"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
-	"github.com/pusher/pusher-http-go"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -36,11 +35,7 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	pconf := helpers.GetPusherURL()
-	pusherClient, perr := pusher.ClientFromURL(pconf)
-	if perr != nil {
-		log.Fatalln(err)
-	}
+	pusherClient := helpers.GetPusherClient()
 
 	trepo := tr.NewPgProjectsRepository(conf)
 	erepo := er.NewPgEventsRepository(conf)

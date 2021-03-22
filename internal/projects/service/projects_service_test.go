@@ -9,7 +9,6 @@ import (
 	"github.com/mrsufgi/projects-manager/internal/domain/mocks"
 	"github.com/mrsufgi/projects-manager/internal/projects/service"
 	"github.com/mrsufgi/projects-manager/pkg/helpers"
-	"github.com/pusher/pusher-http-go"
 )
 
 func String(x string) *string {
@@ -28,10 +27,7 @@ func TestNewProjectService(t *testing.T) {
 		// TODO: Add test cases.
 	}
 
-	psh, err := pusher.ClientFromURL(helpers.GetPusherURL())
-	if err != nil {
-		t.Errorf("Unable to run pusher client = %v", err)
-	}
+	psh := helpers.GetPusherClient()
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := service.NewProjectService(tt.args.tr, psh); !reflect.DeepEqual(got, tt.want) {
@@ -49,19 +45,20 @@ func Test_projectsService_SearchProjects(t *testing.T) {
 	type fields struct {
 		tr domain.ProjectsRepository
 	}
+	type args struct {
+		p domain.SearchProjectsInput
+	}
 	tests := []struct {
 		name    string
 		fields  fields
+		args    args
 		want    *[]domain.Project
 		wantErr bool
 	}{
-		{"happy search projects", fields{tr: tr}, &[]domain.Project{}, false},
+		{"happy search projects", fields{tr: tr}, args{p: domain.SearchProjectsInput{Name: "test"}}, &[]domain.Project{}, false},
 	}
 
-	psh, err := pusher.ClientFromURL(helpers.GetPusherURL())
-	if err != nil {
-		t.Errorf("Unable to run pusher client = %v", err)
-	}
+	psh := helpers.GetPusherClient()
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -69,9 +66,9 @@ func Test_projectsService_SearchProjects(t *testing.T) {
 				tt.fields.tr,
 				psh,
 			)
-			tr.EXPECT().SearchProjects().Return(&[]domain.Project{}, nil)
+			tr.EXPECT().SearchProjects(tt.args.p).Return(&[]domain.Project{}, nil)
 
-			got, err := ts.SearchProjects()
+			got, err := ts.SearchProjects(tt.args.p)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("projectsService.SearchProjects() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -87,17 +84,14 @@ func Test_projectsService_CreateProject(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	tr := mocks.NewMockProjectsRepository(ctrl)
-
 	type fields struct {
 		tr domain.ProjectsRepository
 	}
 	type args struct {
 		project domain.Project
 	}
-	psh, err := pusher.ClientFromURL(helpers.GetPusherURL())
-	if err != nil {
-		t.Errorf("Unable to run pusher client = %v", err)
-	}
+
+	psh := helpers.GetPusherClient()
 	tests := []struct {
 		name    string
 		fields  fields
@@ -139,10 +133,7 @@ func Test_projectsService_ReadProject(t *testing.T) {
 	type args struct {
 		id int
 	}
-	psh, err := pusher.ClientFromURL(helpers.GetPusherURL())
-	if err != nil {
-		t.Errorf("Unable to run pusher client = %v", err)
-	}
+	psh := helpers.GetPusherClient()
 	tests := []struct {
 		name    string
 		fields  fields
@@ -186,10 +177,7 @@ func Test_projectsService_UpdateProject(t *testing.T) {
 		id      int
 		project domain.Project
 	}
-	psh, err := pusher.ClientFromURL(helpers.GetPusherURL())
-	if err != nil {
-		t.Errorf("Unable to run pusher client = %v", err)
-	}
+	psh := helpers.GetPusherClient()
 	tests := []struct {
 		name    string
 		fields  fields
@@ -229,10 +217,7 @@ func Test_projectsService_DeleteProject(t *testing.T) {
 	type args struct {
 		id int
 	}
-	psh, err := pusher.ClientFromURL(helpers.GetPusherURL())
-	if err != nil {
-		t.Errorf("Unable to run pusher client = %v", err)
-	}
+	psh := helpers.GetPusherClient()
 	tests := []struct {
 		name    string
 		fields  fields

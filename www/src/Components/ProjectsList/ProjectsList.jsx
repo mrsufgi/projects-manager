@@ -1,8 +1,9 @@
-import * as React from "react";
+import React, { useState } from "react";
 import { DataGrid } from "@material-ui/data-grid";
 import { Box } from "@material-ui/core";
 import ReactJson from "react-json-view";
 import useAxios from "axios-hooks";
+import { useChannel, useEvent } from "use-pusher";
 
 const columns = [
   { field: "id", headerName: "ID", type: "number", width: 100 },
@@ -34,6 +35,12 @@ const baseUrl = "http://localhost:4000"; // TODO: move to config
 
 export default function DataTable() {
   const [{ data, loading, error }, refetch] = useAxios(`${baseUrl}/projects`);
+  const channel = useChannel("projects");
+  useEvent(channel, "added", (payload) => {
+    console.log("message:", payload);
+    refetch();
+  });
+
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error!</p>;
   return (
