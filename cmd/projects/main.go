@@ -40,7 +40,7 @@ func main() {
 	trepo := tr.NewPgProjectsRepository(conf)
 	erepo := er.NewPgEventsRepository(conf)
 	mservice := ts.NewProjectService(trepo, pusherClient)
-	eservice := es.NewEventService(erepo, mservice)
+	eservice := es.NewEventService(erepo, mservice, pusherClient)
 
 	port := ":3000"
 

@@ -1,6 +1,7 @@
 import * as React from "react";
 import { DataGrid } from "@material-ui/data-grid";
 import useAxios from "axios-hooks";
+import { useChannel, useEvent } from "use-pusher";
 
 const columns = [
   { field: "id", headerName: "ID", type: "number", width: 100 },
@@ -19,8 +20,15 @@ const baseUrl = "http://localhost:4000"; // TODO: move to config
 
 export default function ProjectsList() {
   const [{ data, loading, error }, refetch] = useAxios(`${baseUrl}/events`);
+  const channel = useChannel("events");
+  useEvent(channel, "logged", (payload) => {
+    console.log("message:", payload);
+    refetch();
+  });
+
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error!</p>;
+
   return (
     <div style={{ width: "100%" }}>
       <DataGrid

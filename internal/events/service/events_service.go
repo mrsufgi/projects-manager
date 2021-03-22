@@ -5,18 +5,21 @@ import (
 	"regexp"
 
 	"github.com/mrsufgi/projects-manager/internal/domain"
+	"github.com/pusher/pusher-http-go"
 	log "github.com/sirupsen/logrus"
 )
 
 type eventsService struct {
 	er domain.EventsRepository
 	ps domain.ProjectsService
+	pc *pusher.Client
 }
 
-func NewEventService(er domain.EventsRepository, ps domain.ProjectsService) domain.EventsService {
+func NewEventService(er domain.EventsRepository, ps domain.ProjectsService, pc *pusher.Client) domain.EventsService {
 	return &eventsService{
 		er: er,
 		ps: ps,
+		pc: pc,
 	}
 }
 
@@ -60,6 +63,15 @@ func (ts *eventsService) LogEvent(p domain.LogEventInput) (int, error) {
 		if res == -1 {
 			log.Infof("unable to create event: %v", e)
 			return -1, err
+		}
+		// Note: this is just a "demo" for notifying that a change was made, the type of message
+		// could be either a delta with the actaul payload, or jest a notification that the data is stale.
+		// for simplicity I chose "notifying" something was change so I know when to refetch
+		// data := map[string]string{"message": "hello world"}
+		terr := ts.pc.Trigger("events", "logged", res)
+		if terr != nil {
+			log.Errorf("unable to trigger pusher event")
+			return 0, terr
 		}
 		log.Debugf("event logged succesfully: %#v", e)
 		return res, nil
