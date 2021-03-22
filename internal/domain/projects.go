@@ -6,14 +6,14 @@ import (
 )
 
 type Project struct {
-	ID          int             `db:"project_id" json:"id,omitempty"`
-	Name        *string         `db:"name" json:"name"`
-	Vertical    *string         `db:"vertical" json:"vertical"`
-	Event       *string         `db:"event" json:"event"`
-	URL         *string         `db:"url" json:"url"`
-	Credentials json.RawMessage `db:"credentials" json:"credentials"`
-	CreatedAt   *time.Time      `db:"created_at" json:"created_at"`
-	UpdatedAt   *time.Time      `db:"updated_at" json:"updated_at"`
+	ID          int              `db:"project_id" json:"id"`
+	Name        *string          `db:"name" json:"name"`
+	Vertical    *string          `db:"vertical" json:"vertical"`
+	Event       *string          `db:"event" json:"event"`
+	URL         *string          `db:"url" json:"url"`
+	Credentials *json.RawMessage `db:"credentials" json:"credentials,omitempty"`
+	CreatedAt   *time.Time       `db:"created_at" json:"created_at"`
+	UpdatedAt   *time.Time       `db:"updated_at" json:"updated_at"`
 }
 type SearchProjectsInput struct {
 	Name string

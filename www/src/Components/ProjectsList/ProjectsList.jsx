@@ -1,6 +1,6 @@
 import * as React from "react";
 import { DataGrid } from "@material-ui/data-grid";
-import { Box, Button } from "@material-ui/core";
+import { Box } from "@material-ui/core";
 import ReactJson from "react-json-view";
 import useAxios from "axios-hooks";
 

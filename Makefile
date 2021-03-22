@@ -9,7 +9,11 @@ install:
 	curl -sSfL https://raw.githubusercontent.com/cosmtrek/air/master/install.sh | sh -s
 	make dependencies
 	make lint-prepare
+	make client-install 
 
+client-install: 
+	yarn --cwd www
+	
 integration-test: 
 	docker-compose -f docker-compose.yml -f docker-compose.test.yml up --abort-on-container-exit
 	docker-compose -f docker-compose.yml -f docker-compose.test.yml down
@@ -57,6 +61,8 @@ lint-prepare:
 lint:
 	./bin/golangci-lint run
 
+client-start: 
+	yarn --cwd www start
 
 # Note: temporary until we move migrations to file
 dbname := $(or $(POSTGRES_DB),postgres)

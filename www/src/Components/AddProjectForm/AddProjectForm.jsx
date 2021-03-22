@@ -28,7 +28,7 @@ const addSchema = Yup.object().shape({
 
 const baseUrl = "http://localhost:4000";
 export default function AddProjectForm(props) {
-  const [{ data, loading, error }, createProject] = useAxios(
+  const [{ loading, error }, createProject] = useAxios(
     {
       method: "POST",
       baseURL: baseUrl,
