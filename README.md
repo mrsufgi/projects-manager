@@ -10,6 +10,9 @@ This is still pretty much WIP, needs more tests (missing integration tests), fix
 - [ ] cleanup makefile
 - [ ] fix lint issues
 - [ ] improve docs
+- [ ] monorepo structure
+- [ ] pusher modules (pkg)
+- [ ] client build
 
 ### Prerequisites
 
@@ -19,7 +22,7 @@ This is still pretty much WIP, needs more tests (missing integration tests), fix
 
 ## Getting Started
 
-If you just want to run it, I've created a docker-compose that will install everything for you and start the server.
+If you just want to run the API, I've created a docker-compose that will install everything for you and start the server.
 
 To start, run:
 
@@ -29,7 +32,8 @@ make start
 
 it will create everything you need and run it.
 the server is running on: `localhost:4000`
-caveat: you will need to run migrations (actually rerun the migration container):
+
+if for some reason, you experience issues with migration run:
 
 ```bash
 docker start migrate
@@ -56,12 +60,27 @@ Otherwise the api is CRUD using REST:
 (assuming you ran it using `make start` the host is <b>http://localhost:4000</b>)
 
 ```http
-GET /projects/?q=
+GET /projects/?name=xxx&url=yyy
 GET /projects/:id
-PUT /projects/:id {done: bool, name: string, details: string}
-POST /projects {done: bool, name: string, details: string}
+PUT /projects/:id {name: string, vertical: string, event: string, url: string, credentials: string}
+POST /projects {name: string, vertical: string, event: string, url: string, credentials: string}
 DELETE /projects/:id
+
+GET /events/?name=xxx
+GET /events/:id
 ```
+
+## Running the web client (WIP)
+
+The client setup is still pretty basic and we need to invest time in the right tools.
+if you ran the api using the method described above use:
+
+```bash
+make client-install # run yarn
+make client-start # run yarn start
+```
+
+The client configs are still hardcoded. it uses`http://localhost:4000` as the API endpoint.
 
 ## Local Devlopment and Tests
 
@@ -81,4 +100,4 @@ make unit-tests
 
 ### Integration tests
 
-PROJECT
+TBD
