@@ -12,6 +12,7 @@ import (
 	_ "github.com/lib/pq"
 	ehd "github.com/mrsufgi/projects-manager/internal/events/delivery/http"
 	thd "github.com/mrsufgi/projects-manager/internal/projects/delivery/http"
+	"github.com/rs/cors"
 
 	er "github.com/mrsufgi/projects-manager/internal/events/repository/pg"
 	es "github.com/mrsufgi/projects-manager/internal/events/service"
@@ -55,9 +56,12 @@ func main() {
 	router.GET("/metrics", Metrics(promhttp.Handler()))
 	router.GET("/health", Health)
 
+	// add CORS
+	handler := cors.Default().Handler(router)
+
 	s := &http.Server{
 		Addr:         port,
-		Handler:      router,
+		Handler:      handler,
 		ReadTimeout:  30 * time.Second,
 		WriteTimeout: 30 * time.Second,
 

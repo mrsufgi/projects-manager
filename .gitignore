@@ -20,3 +20,11 @@ bin/
 
 # filesystem
 .DS_Store
+
+# node_modules
+node_modules/
+
+# yarn/npm
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
